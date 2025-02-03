@@ -17,7 +17,7 @@ config = {
         "seed": 42
     },
     "models": {
-        "teacher": "arcee-ai/Arcee-Spark",
+        "teacher": "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
         "student": "Qwen/Qwen2-1.5B"
     },
     "tokenizer": {
