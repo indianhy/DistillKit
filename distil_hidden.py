@@ -17,7 +17,7 @@ config = {
         "seed": 42
     },
     "models": {
-        "teacher": "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+        "teacher": "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
         "student": "Qwen/Qwen2-1.5B"
     },
     "tokenizer": {
@@ -149,7 +149,7 @@ class CustomSFTTrainer(SFTTrainer):
         self.max_seq_length = kwargs.get('max_seq_length', 1024)
         super(CustomSFTTrainer, self).__init__(*args, **kwargs)
 
-    def compute_loss(self, model, inputs, return_outputs=False):
+    def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
         student_inputs = {
             "input_ids": inputs["input_ids"],
             "attention_mask": inputs["attention_mask"],
@@ -213,15 +213,15 @@ training_arguments = TrainingArguments(
     **config["training"],
     remove_unused_columns=False,
 )
+training_arguments.max_seq_length=config["tokenizer"]["max_length"]
+training_arguments.packing=config["training"].get("packing", False)
 
 # Create the custom SFT Trainer
 trainer = CustomSFTTrainer(
     model=student_model,
     train_dataset=dataset,
-    max_seq_length=config["tokenizer"]["max_length"],
     tokenizer=student_tokenizer,
     args=training_arguments,
-    packing=config["training"].get("packing", False),
 )
 
 # Add these attributes to the trainer
